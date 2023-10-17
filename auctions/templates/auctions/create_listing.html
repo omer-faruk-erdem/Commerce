@@ -1,0 +1,15 @@
+{% extends "auctions/layout.html" %}
+
+
+{% block body %}
+    <form action = "{% url 'create_listing' %}" method = "POST" enctype ="multipart/form-data">
+        {% csrf_token %}
+        <div style = " display: flex; flex-direction: column;" > <h4> Title : </h4>      {{ form.title }} </div>
+        <div style = " display: flex; flex-direction: column; width : 500px" > <h4> Description : </h4>  {{ form.description }}</div>
+        <div style = " display: flex; flex-direction: column;" >   <h4> Image :  </h4>    {{ form.image }} </div>
+        <div style = " display: flex; flex-direction: column; "> <h4> Starting Bid : </h4>   {{ form.start_bid }} </div>
+        <div style = " display: flex; flex-direction: column; width : 200px"> <h4> Category : </h4>   {{ form.category }} </div>
+        <br>
+        <input type="submit" value="Create Listing" style = "background-color : #107cfc; color : white">
+    </form>
+{% endblock %}
