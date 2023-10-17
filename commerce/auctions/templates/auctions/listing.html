@@ -1,0 +1,86 @@
+{% extends "auctions/layout.html" %}
+
+
+{% block body %}
+    {% if listing.active_listing == False %}
+        <h2> This auction is closed </h2>
+    {% else %}
+        <div > 
+            <h1> Listing : {{ listing.title }} </h1>
+
+            {% if user.is_authenticated %}
+
+                {% if  in_users_watchlist  %}
+                    <form action = "{% url 'remove_from_watchlist' listing.id %}"  method = "POST" >
+                        {% csrf_token %}
+                        <input type="submit" value="Remove" >
+                    </form>
+                {% else  %}
+                    <form action = "{% url 'add_to_watchlist' listing.id %}"  method = "POST">
+                        {% csrf_token %}
+                        <input type="submit" value="Watchlist" >
+                    </form>
+                {% endif%}
+
+            {% endif %}
+
+            <img src = {{listing.image.url}} height = 300>
+            <p> {{listing.description}} </p>
+            <h3 style = "font-weight:bold"> $ {{listing.bottom_price}} </h3>
+            <br>
+            <h7> {{listing.bid_count}} bid(s) so far. </h7>
+            {% if current_bid.owner == user %}
+                    Your bid is the current bid.
+            {% endif %}
+        
+            <br>
+            {% if user.username != listing.owner.username and user.is_authenticated %}
+                <form action ="{% url 'place_bid' listing.id %}" method = "POST" >
+                    {% csrf_token %}
+                    {{bid_form}}
+                    <br>
+                    <input type="submit" value = "Place Bid" style = "background-color : #107cfc; color : white" > <!--  -->
+                </form>
+            {% elif not user.is_authenticated %}
+                <h7>To place bid you must <a href="{% url 'login' %}"> log in </a>  </h7>
+            {% endif %}
+            
+
+            <h4> Details : </h4>
+            <ul>
+                <li> Listed by : {{ listing.owner.username }} </li> 
+                <li> Category : {{listing.category.category}} </li> 
+                <li> Created at {{date}} </li>
+            </ul>
+        </div>
+
+        {% for comment in comments %}
+            <div class="comment">
+                <div class = "comment_user"> 
+                    {{ comment.user.username}} : 
+                </div>
+
+                <div class = "comment_text">
+                    {{ comment.comment_text}}
+                </div>
+                <!-- If comments owner is the same owner with user that visits the page -->
+                {% if user.is_authenticated and user.username == comment.user.username %}
+                    <form action="{% url 'delete_comment' listing.id comment.id %}" method="POST" >
+                        {% csrf_token %}
+                        <input type="submit" value="Delete comment">
+                    </form>
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        {% if user.is_authenticated %}
+            <form action = "{% url 'add_comment' listing.id %}" method = "POST">
+                {% csrf_token %}
+                <strong> {{user.username}} </strong> :  {{ comment_form.comment }}
+                <input type="submit" value = "Send Comment" >
+            </form>
+        {% endif %}
+
+        
+    {% endif %}
+{% endblock  %}

@@ -1,0 +1,34 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    {% if title %}
+        <h2>{{title}} Listings</h2>    
+    {% else %}
+        <h2>Active Listings</h2>    
+    {% endif %}
+
+    {% for item in listings %}
+        <a class = "listing_link" href = "{% url 'listing' item.id %}">
+        <div class="listing_element">
+            <div style = "margin-left: 12%">
+            <img
+                src={{item.image.url}}
+                alt="click here"
+                height="300px"
+                width="300px"
+                
+            >
+            </div>
+            <div class = "listing_info">
+                <p class = "listing_title"> {{ item.title }}  </p>                
+                <p class = "listing_price"> Price : ${{ item.bottom_price }} </p>
+                <p class = "listing_date"> Created {{ item.date_string }}  </p>
+            </div>
+        </div>
+        </a>
+    {% endfor %}
+    {% if is_empty %}
+        <li style="margin-left : 3% ; font-size:150%"> ! No active listing </li>
+    {% endif %}
+
+{% endblock %}
